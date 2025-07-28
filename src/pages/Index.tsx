@@ -31,6 +31,7 @@ interface Review {
 const Index = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   const products: Product[] = [
     {
@@ -216,6 +217,15 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center space-x-4">
+              {/* Mobile menu button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <Icon name={isMobileMenuOpen ? "X" : "Menu"} size={24} />
+              </Button>
               <div className="relative">
                 <Button variant="outline" size="sm" className="relative">
                   <Icon name="ShoppingCart" size={20} />
@@ -228,6 +238,49 @@ const Index = () => {
               </div>
             </div>
           </div>
+          
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t border-orange-100 animate-fade-in">
+              <nav className="flex flex-col space-y-4 pt-4">
+                <a 
+                  href="#" 
+                  className="text-gray-700 hover:text-primary transition-colors px-2 py-1 rounded hover:bg-orange-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Главная
+                </a>
+                <a 
+                  href="#" 
+                  className="text-gray-700 hover:text-primary transition-colors px-2 py-1 rounded hover:bg-orange-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  О нас
+                </a>
+                <a 
+                  href="#catalog" 
+                  className="text-gray-700 hover:text-primary transition-colors px-2 py-1 rounded hover:bg-orange-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Каталог
+                </a>
+                <a 
+                  href="#" 
+                  className="text-gray-700 hover:text-primary transition-colors px-2 py-1 rounded hover:bg-orange-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Доставка
+                </a>
+                <a 
+                  href="#" 
+                  className="text-gray-700 hover:text-primary transition-colors px-2 py-1 rounded hover:bg-orange-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Контакты
+                </a>
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
@@ -236,10 +289,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
-              <h2 className="font-heading text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="font-heading text-3xl md:text-5xl font-bold text-gray-900 mb-6">
                 Создайте уютный дом своей мечты
               </h2>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
                 Откройте для себя коллекцию качественных товаров для дома и отдыха. 
                 Мы поможем создать атмосферу тепла и комфорта в каждом уголке вашего дома.
               </p>
@@ -268,7 +321,7 @@ const Index = () => {
       {/* Categories */}
       <section id="catalog" className="py-16">
         <div className="container mx-auto px-4">
-          <h3 className="font-heading text-3xl font-bold text-center text-gray-900 mb-12">
+          <h3 className="font-heading text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8 md:mb-12">
             Категории товаров
           </h3>
           <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -277,16 +330,17 @@ const Index = () => {
                 key={category.id}
                 variant={selectedCategory === category.id ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category.id)}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 text-sm md:text-base"
               >
                 <Icon name={category.icon as any} size={18} />
-                <span>{category.name}</span>
+                <span className="hidden sm:inline">{category.name}</span>
+                <span className="sm:hidden">{category.name.split(' ')[0]}</span>
               </Button>
             ))}
           </div>
 
           {/* Products Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {filteredProducts.map((product) => {
               const productReviews = getProductReviews(product.id);
               return (
