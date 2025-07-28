@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import Icon from '@/components/ui/icon';
 
 interface Product {
@@ -13,6 +15,9 @@ interface Product {
   rating: number;
   reviews: number;
   description: string;
+  fullDescription?: string;
+  specifications?: string[];
+  images?: string[];
 }
 
 interface CartItem extends Product {
@@ -32,6 +37,8 @@ const Index = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   const products: Product[] = [
     {
@@ -42,7 +49,10 @@ const Index = () => {
       image: '/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg',
       rating: 4.8,
       reviews: 127,
-      description: 'Мягкое кресло с эргономичной спинкой для максимального комфорта'
+      description: 'Мягкое кресло с эргономичной спинкой для максимального комфорта',
+      fullDescription: 'Элегантное кресло "Комфорт" создано для тех, кто ценит качество и комфорт. Эргономичная спинка обеспечивает правильную поддержку позвоночника, а мягкие подлокотники позволяют расслабиться после долгого дня. Обивка из премиального текстиля легко чистится и сохраняет свой вид долгие годы.',
+      specifications: ['Размеры: 85 x 90 x 95 см', 'Материал: натуральное дерево, текстиль', 'Вес: 28 кг', 'Цвет: бежевый/коричневый', 'Гарантия: 2 года'],
+      images: ['/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg', '/img/b0f20acc-c7d6-4f6c-a088-357d1c807c80.jpg']
     },
     {
       id: 2,
@@ -52,7 +62,10 @@ const Index = () => {
       image: '/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg',
       rating: 4.6,
       reviews: 84,
-      description: 'Стильная мебель для отдыха на открытом воздухе'
+      description: 'Стильная мебель для отдыха на открытом воздухе',
+      fullDescription: 'Садовый набор "Релакс" превратит ваш сад или террасу в уютное место для отдыха. Изготовлен из влагостойких материалов, устойчивых к перепадам температур. В комплект входят удобные кресла с мягкими подушками и практичный столик.',
+      specifications: ['В комплекте: 2 кресла + столик', 'Материал: алюминий, текстилен', 'Столик: 60 x 60 см', 'Кресла: складные', 'Устойчивость к УФ'],
+      images: ['/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg', '/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg']
     },
     {
       id: 3,
@@ -62,7 +75,10 @@ const Index = () => {
       image: '/img/b0f20acc-c7d6-4f6c-a088-357d1c807c80.jpg',
       rating: 4.9,
       reviews: 203,
-      description: 'Современные аксессуары для уютной кухни'
+      description: 'Современные аксессуары для уютной кухни',
+      fullDescription: 'Полный набор кухонных аксессуаров для создания уютной атмосферы. Включает в себя все необходимое для комфортного приготовления пищи и сервировки стола. Выполнен в едином стиле из качественных экологичных материалов.',
+      specifications: ['В комплекте: 12 предметов', 'Материал: бамбук, керамика', 'Можно мыть в посудомойке', 'Антибактериальное покрытие', 'Стиль: скандинавский'],
+      images: ['/img/b0f20acc-c7d6-4f6c-a088-357d1c807c80.jpg', '/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg']
     },
     {
       id: 4,
@@ -72,7 +88,10 @@ const Index = () => {
       image: '/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg',
       rating: 4.7,
       reviews: 156,
-      description: 'Мягкий плед из натуральных материалов'
+      description: 'Мягкий плед из натуральных материалов',
+      fullDescription: 'Невероятно мягкий и теплый плед "Тепло дома" создан из премиальных натуральных волокон. Идеально подходит для уютных вечеров дома, просмотра фильмов или чтения книг. Гипоаллергенный состав делает его безопасным для всей семьи.',
+      specifications: ['Размер: 150 x 200 см', 'Материал: 100% шерсть мериноса', 'Вес: 1.2 кг', 'Стирка: деликатная, 30°C', 'Сертификат: Oeko-Tex'],
+      images: ['/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg', '/img/b0f20acc-c7d6-4f6c-a088-357d1c807c80.jpg']
     },
     {
       id: 5,
@@ -82,7 +101,10 @@ const Index = () => {
       image: '/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg',
       rating: 4.8,
       reviews: 92,
-      description: 'Просторный диван для всей семьи'
+      description: 'Просторный диван для всей семьи',
+      fullDescription: 'Большой семейный диван, который станет центром вашей гостиной. Рассчитан на 3-4 человека, имеет ортопедические пружины и съемные чехлы для легкого ухода. Классический дизайн впишется в любой интерьер.',
+      specifications: ['Размеры: 220 x 95 x 85 см', 'Спальное место: 200 x 140 см', 'Механизм: еврокнижка', 'Наполнитель: пружинный блок', 'Ткань: рогожка'],
+      images: ['/img/99b15021-dace-43c6-a9c0-4a88de030462.jpg', '/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg']
     },
     {
       id: 6,
@@ -92,7 +114,10 @@ const Index = () => {
       image: '/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg',
       rating: 4.5,
       reviews: 67,
-      description: 'Профессиональный гриль для дачи и пикников'
+      description: 'Профессиональный гриль для дачи и пикников',
+      fullDescription: 'Профессиональный угольный гриль для истинных ценителей барбекю. Регулируемая высота решетки, встроенный термометр и удобная система вентиляции обеспечивают идеальный результат приготовления. Прочная конструкция прослужит много лет.',
+      specifications: ['Диаметр решетки: 57 см', 'Материал: чугун, сталь', 'Вес: 15 кг', 'Колеса для транспортировки', 'Крышка с термометром'],
+      images: ['/img/f875343e-7bcc-432d-809b-121f2bcabaa0.jpg', '/img/b0f20acc-c7d6-4f6c-a088-357d1c807c80.jpg']
     }
   ];
 
@@ -380,13 +405,26 @@ const Index = () => {
                       </span>
                     </div>
                     
-                    <Button
-                      onClick={() => addToCart(product)}
-                      className="w-full bg-primary hover:bg-primary/90"
-                    >
-                      <Icon name="ShoppingCart" size={18} className="mr-2" />
-                      В корзину
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setSelectedImageIndex(0);
+                        }}
+                        className="flex-1"
+                      >
+                        <Icon name="Eye" size={18} className="mr-2" />
+                        Подробнее
+                      </Button>
+                      <Button
+                        onClick={() => addToCart(product)}
+                        className="flex-1 bg-primary hover:bg-primary/90"
+                      >
+                        <Icon name="ShoppingCart" size={18} className="mr-2" />
+                        В корзину
+                      </Button>
+                    </div>
 
                     {/* Product Reviews Preview */}
                     {productReviews.length > 0 && (
@@ -485,6 +523,143 @@ const Index = () => {
           </div>
         </section>
       )}
+
+      {/* Product Detail Modal */}
+      <Dialog open={selectedProduct !== null} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="font-heading text-2xl">{selectedProduct.name}</DialogTitle>
+              </DialogHeader>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Product Images */}
+                <div className="space-y-4">
+                  <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+                    <img
+                      src={selectedProduct.images?.[selectedImageIndex] || selectedProduct.image}
+                      alt={selectedProduct.name}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  
+                  {selectedProduct.images && selectedProduct.images.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto">
+                      {selectedProduct.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImageIndex(index)}
+                          className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                            selectedImageIndex === index 
+                              ? 'border-primary' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <img
+                            src={image}
+                            alt={`${selectedProduct.name} ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Product Info */}
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-heading text-3xl font-bold text-primary">
+                        {selectedProduct.price.toLocaleString('ru-RU')} ₽
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center">
+                          {renderStars(selectedProduct.rating)}
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          ({selectedProduct.reviews} отзывов)
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-600 leading-relaxed mb-4">
+                      {selectedProduct.fullDescription || selectedProduct.description}
+                    </p>
+                  </div>
+                  
+                  {/* Specifications */}
+                  {selectedProduct.specifications && (
+                    <div>
+                      <h3 className="font-heading text-lg font-semibold mb-3">Характеристики</h3>
+                      <ul className="space-y-2">
+                        {selectedProduct.specifications.map((spec, index) => (
+                          <li key={index} className="flex items-start space-x-2 text-sm">
+                            <Icon name="Check" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                            <span>{spec}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  <Separator />
+                  
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => {
+                        addToCart(selectedProduct);
+                        setSelectedProduct(null);
+                      }}
+                      className="flex-1 bg-primary hover:bg-primary/90"
+                      size="lg"
+                    >
+                      <Icon name="ShoppingCart" size={20} className="mr-2" />
+                      Добавить в корзину
+                    </Button>
+                    <Button variant="outline" size="lg">
+                      <Icon name="Heart" size={20} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <Separator className="my-6" />
+              
+              {/* Reviews Section */}
+              <div>
+                <h3 className="font-heading text-xl font-semibold mb-4">Отзывы покупателей</h3>
+                <div className="space-y-4 max-h-60 overflow-y-auto">
+                  {getProductReviews(selectedProduct.id).map((review) => (
+                    <div key={review.id} className="p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-3">
+                          <span className="font-medium">{review.author}</span>
+                          <div className="flex items-center">
+                            {renderStars(review.rating)}
+                          </div>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(review.date).toLocaleDateString('ru-RU')}
+                        </span>
+                      </div>
+                      <p className="text-gray-700">{review.comment}</p>
+                    </div>
+                  ))}
+                  
+                  {getProductReviews(selectedProduct.id).length === 0 && (
+                    <p className="text-gray-500 text-center py-8">
+                      Пока нет отзывов об этом товаре
+                    </p>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
